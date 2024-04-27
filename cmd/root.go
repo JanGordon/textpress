@@ -27,14 +27,13 @@ var gzipCompression bool
 var compressionLevel string
 
 var rootCmd = &cobra.Command{
-	Use:   "hugo",
-	Short: "Hugo is a very fast static site generator",
-	Long: `A Fast and Flexible Static Site Generator built with
-				  love by spf13 and friends in Go.
-				  Complete documentation is available at http://hugo.spf13.com`,
+	Use:   "textpress",
+	Short: "compresses text files with brotli or gzip",
+	Long:  "compresses text files with brotli or gzip first argument, is the input file",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			fmt.Println("error: no input file was provided")
+			os.Exit(1)
 		}
 		file, err := os.ReadFile(args[0])
 		if err != nil {
@@ -74,6 +73,7 @@ var rootCmd = &cobra.Command{
 			w, err := gzip.NewWriterLevel(gb, level)
 			if err != nil {
 				fmt.Println("error: incorrect level")
+				os.Exit(1)
 			}
 			w.Write(file)
 			w.Close()
@@ -115,7 +115,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.Flags().StringVarP(&compressionLevel, "level", "l", "size", "select compression to best speed or size")
 	rootCmd.Flags().BoolVarP(&brotliCompression, "brotli", "b", false, "select brotli compression")
-	rootCmd.Flags().BoolVarP(&gzipCompression, "gzip", "g", false, "select gzip compression")
+	rootCmd.Flags().BoolVarP(&gzipCompression, "gzip", "g", true, "select gzip compression")
 }
 
 func Execute() {
